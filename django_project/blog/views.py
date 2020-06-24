@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post, Like
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from users.models import Profile
 	
 def home(request):
 	context = {
@@ -26,14 +27,20 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-	model = Post
-	template_name = 'blog/user_posts.html'
-	context_object_name = 'posts'
-	paginate_by = 5
+    context_object_name = 'posts'    
+    template_name = 'blog/user_posts.html'
+    paginate_by = 5
 
-	def get_queryset(self):
-		user = get_object_or_404(User, username=self.kwargs.get('username'))
-		return Post.objects.filter(author=user).order_by('-date_posted')
+    def get_queryset(self):
+    	user = get_object_or_404(User, username=self.kwargs.get('username'))
+    	return Post.objects.filter(author=user).order_by('-date_posted')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserPostListView, self).get_context_data(**kwargs)
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        context['following'] = Profile.objects.filter(followed=user)
+        return context
+
 
 class PostDetailView(LoginRequiredMixin, DetailView):
 	model = Post

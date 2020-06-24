@@ -22,6 +22,18 @@
               </a></p>
             {% endif %}
 
+
+            {% if following.count == 0  %}
+              <p class="text-secondary"> <a href="#">
+              {{ following.count }} Following
+              </a></p>
+            {% else %}
+              <p class="text-secondary"> <a href="{% url 'following' post.author %}">
+              {{ following.count }} Following
+              </a></p>
+            {% endif %}
+
+
             <p class="text-secondary"><em>{{ post.author.profile.bio }}</em></p>
 
             {% if post.author.profile != user.profile %}
@@ -35,13 +47,8 @@
               {% endif %}
             </form>
             {% endif %}
-
-            
           </div>
       </div>
-
-          
-        
       {% endif %}
     {% endfor %}
 

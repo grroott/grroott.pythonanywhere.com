@@ -44,7 +44,8 @@ def edit_profile(request):
 @login_required
 def user_profile(request):
 	context = {
-	'posts' : Post.objects.filter(author=request.user).order_by('-date_posted')
+	'posts' : Post.objects.filter(author=request.user).order_by('-date_posted'),
+	'following' : Profile.objects.filter(followed=request.user)
 	}
 	return render(request, 'users/user_profile.html', context)
 

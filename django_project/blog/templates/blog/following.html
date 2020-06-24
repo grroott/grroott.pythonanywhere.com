@@ -1,0 +1,11 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h3 class="mb-3" >"{{ posts.first.author }}" is following {{ following.count }} people:</h3>
+
+{% for follow in following %}
+	<a href=" {% url 'user-posts' follow.user %}">{{ follow.user }}</a>
+  	<p></p>
+{% endfor %}
+
+
+{% endblock content %}
