@@ -51,6 +51,13 @@
 	       	   	</a></h2>
 	           	<p class="article-content">{{ post.content |truncatewords:"50" }}</p>
 	           	<a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
+
+	           	{% if post.liked.all.count >= 2 %}
+              		<p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
+            	{% else %}
+              		<p><strong><em>Like: {{ post.liked.all.count }}</em></strong></p>
+            	{% endif %}
+
 	        </div>
         </article>
 {% endfor %}
@@ -80,3 +87,6 @@
       {% endif %}
 
 {% endif %}
+
+
+
