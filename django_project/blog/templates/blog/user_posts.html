@@ -33,6 +33,7 @@
               </a></p>
             {% endif %}
 
+            <p>{{ profile_likes }} Likes</p>
 
             <p class="text-secondary"><em>{{ post.author.profile.bio }}</em></p>
 
@@ -53,6 +54,7 @@
     {% endfor %}
 
     <p></p>
+
 
     <h2 class="mb-3">Posts by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h2>
     {% for post in posts %}
@@ -98,4 +100,3 @@
 
     {% endif %}
 {% endblock content %}
-

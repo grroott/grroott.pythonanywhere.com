@@ -8,6 +8,7 @@ from .models import Post, Like
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from users.models import Profile
+from django.db.models import Count, Sum
 	
 def home(request):
 	context = {
@@ -39,6 +40,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
         context = super(UserPostListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         context['following'] = Profile.objects.filter(followed=user)
+        context['profile_likes'] = Post.objects.filter(author=user).annotate(like_count=Count('liked')).aggregate(total_likes=Sum('like_count'))['total_likes']
         return context
 
 

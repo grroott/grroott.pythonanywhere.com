@@ -5,6 +5,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, Feedback
 from .models import Profile, Follow
 from blog.models import Post
 from django.contrib.auth.models import User
+from django.db.models import Count, Sum
 
 def register(request):
 	if request.method == "POST":
@@ -45,7 +46,8 @@ def edit_profile(request):
 def user_profile(request):
 	context = {
 	'posts' : Post.objects.filter(author=request.user).order_by('-date_posted'),
-	'following' : Profile.objects.filter(followed=request.user)
+	'following' : Profile.objects.filter(followed=request.user),
+	'profile_likes' : Post.objects.filter(author=request.user).annotate(like_count=Count('liked')).aggregate(total_likes=Sum('like_count'))['total_likes']
 	}
 	return render(request, 'users/user_profile.html', context)
 
