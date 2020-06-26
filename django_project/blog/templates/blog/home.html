@@ -9,7 +9,7 @@
               <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content |truncatewords:"50" }}</p>
+            <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
             <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
             {% if post.liked.all.count >= 2 %}
               <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>

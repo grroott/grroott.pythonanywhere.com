@@ -7,7 +7,8 @@
 		{% csrf_token %}
 		<fieldset class="form-group">
 			<legend class="border-bottom mb-4">Create a new Blog post</legend>
-			{{ form | crispy}}
+			{{ form.media }}
+			{{ form | crispy }}
 		</fieldset>
 		<div class="form-group">
 			<button class="btn btn-outline-info" type="submit">Post</button>

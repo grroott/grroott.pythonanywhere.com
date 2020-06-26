@@ -3,10 +3,12 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
 from django.core.validators import MinLengthValidator
+from ckeditor.fields import RichTextField
 
 class Post(models.Model):
 	title = models.CharField(max_length=100)
-	content = models.TextField(validators=[MinLengthValidator(200)])
+	content = RichTextField(blank=False, null=True, validators=[MinLengthValidator(200)])
+	# content = models.TextField(validators=[MinLengthValidator(200)])
 	liked = models.ManyToManyField(User, default=None, blank=True, related_name = 'liked')
 	date_posted = models.DateTimeField(default=timezone.now)
 	author = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'author')
