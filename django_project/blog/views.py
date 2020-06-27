@@ -8,7 +8,9 @@ from .models import Post, Like
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from users.models import Profile
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
+from django.core.paginator import Paginator
+
 	
 def home(request):
 	context = {
@@ -113,3 +115,17 @@ def like_post(request):
 
 		like.save()
 	return redirect(request.META.get('HTTP_REFERER', 'blog-home'))
+
+
+def search(request):
+	query = request.GET.get('user_search_input')
+
+	if query:
+		results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+	else:
+		return HttpResponse("Access denied")
+	context={
+	'results' : results,
+	'search_word' : query
+	}
+	return render(request, 'blog/search.html', context)

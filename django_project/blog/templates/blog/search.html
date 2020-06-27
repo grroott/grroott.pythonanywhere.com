@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    {% if results %}
+      <h3 >Search results for <strong><em>"{{ search_word }}"</em></strong></h3>
+      {% for result in results %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ result.author.profile.image.url }}">
+          <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-posts' result.author.username %}"><em>{{ result.author }}</em></a>
+            <small class="text-muted">{{ result.date_posted|date:"F d, Y" }}</small>
+          </div>
+          <h2><a class="article-title" href="{% url 'post-detail' result.id %}">{{ result.title }}</a></h2>
+          <p class="article-content">{{ result.content | safe | truncatewords:"50" }}</p>
+          <a href="{% url 'post-detail' result.id %}"><u>See post</u></a>
+          {% if result.liked.all.count >= 2 %}
+            <p><strong><em>Likes: {{ result.liked.all.count }}</em></strong></p>
+          {% else %}
+            <p><strong><em>Like: {{ result.liked.all.count }}</em></strong></p>
+          {% endif %}
+        </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <h3>No results found for 
+        <strong><em>"{{ search_word }}"</em></strong>.
+         Try searching with different keyword!! </h3>
+    {% endif %}
+{% endblock content %}
