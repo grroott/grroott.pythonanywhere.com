@@ -9,9 +9,9 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from users.models import Profile
 from django.db.models import Count, Sum, Q
-from django.core.paginator import Paginator
+from django import template
 
-	
+
 def home(request):
 	context = {
 	'posts' : Post.objects.all()
@@ -30,7 +30,7 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-    context_object_name = 'posts'    
+    context_object_name = 'posts'
     template_name = 'blog/user_posts.html'
     paginate_by = 5
 
@@ -48,7 +48,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
 
 class PostDetailView(LoginRequiredMixin, DetailView):
 	model = Post
-		
+
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 	model = Post
@@ -88,7 +88,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	    response = super().delete(request, *args, **kwargs)
 	    messages.success(self.request, 'Your post has been deleted sucessfully!')
 	    return response
-		
+
 
 def about(request):
 	return render(request, 'blog/about.html', {'title':'About'})
@@ -121,7 +121,7 @@ def search(request):
 	query = request.GET.get('user_search_input')
 
 	if query:
-		results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+		results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query)).order_by('-date_posted')
 	else:
 		return HttpResponse("Access denied")
 	context={
@@ -129,3 +129,8 @@ def search(request):
 	'search_word' : query
 	}
 	return render(request, 'blog/search.html', context)
+
+
+
+
+

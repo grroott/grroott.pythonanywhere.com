@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load search_highlighter %}
 {% block content %}
     {% if results %}
       <h3 >Search results for <strong><em>"{{ search_word }}"</em></strong></h3>
@@ -10,8 +11,8 @@
             <a class="mr-2" href="{% url 'user-posts' result.author.username %}"><em>{{ result.author }}</em></a>
             <small class="text-muted">{{ result.date_posted|date:"F d, Y" }}</small>
           </div>
-          <h2><a class="article-title" href="{% url 'post-detail' result.id %}">{{ result.title }}</a></h2>
-          <p class="article-content">{{ result.content | safe | truncatewords:"50" }}</p>
+          <h2><a class="article-title" href="{% url 'post-detail' result.id %}">{{ result.title | highlight_search:search_word }}</a></h2>
+          <p class="article-content">{{ result.content | safe | truncatewords:"50" | highlight_search:search_word }}</p>
           <a href="{% url 'post-detail' result.id %}"><u>See post</u></a>
           {% if result.liked.all.count >= 2 %}
             <p><strong><em>Likes: {{ result.liked.all.count }}</em></strong></p>
