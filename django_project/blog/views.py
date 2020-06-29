@@ -8,10 +8,10 @@ from .models import Post, Like
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from users.models import Profile
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum, Q, Min, Max, Avg
 from django import template
 
-
+	
 def home(request):
 	context = {
 	'posts' : Post.objects.all()
@@ -30,7 +30,7 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-    context_object_name = 'posts'
+    context_object_name = 'posts'    
     template_name = 'blog/user_posts.html'
     paginate_by = 5
 
@@ -48,7 +48,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
 
 class PostDetailView(LoginRequiredMixin, DetailView):
 	model = Post
-
+		
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 	model = Post
@@ -88,7 +88,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	    response = super().delete(request, *args, **kwargs)
 	    messages.success(self.request, 'Your post has been deleted sucessfully!')
 	    return response
-
+		
 
 def about(request):
 	return render(request, 'blog/about.html', {'title':'About'})
@@ -130,7 +130,13 @@ def search(request):
 	}
 	return render(request, 'blog/search.html', context)
 
-
-
-
+def most_liked_posts(request):
+	query = Like.objects.values('post_id').order_by().annotate(like_count=Count('post_id'))
+	maxval = sorted(query, key=lambda x:x['like_count'], reverse=True)[:5]
+	posts = Post.objects.all()
+	context={
+	'maxval':maxval,
+	'posts': posts
+	}
+	return render(request, 'blog/most_liked_posts.html', context)
 

@@ -22,4 +22,5 @@ urlpatterns = [
     path('about/', views.about, name='blog-about'),
     path('likes/', views.like_post, name='like-post'),
     path('search/', views.search, name='search'),
+    path('most-liked-posts/', views.most_liked_posts, name='most-liked-posts'),
 ]

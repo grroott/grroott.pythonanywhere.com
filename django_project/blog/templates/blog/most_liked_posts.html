@@ -1,0 +1,26 @@
+{% extends "blog/base.html" %}
+{% block content %}
+{% for i in maxval %}
+	{% for post in posts %}
+		{% if i.post_id == post.id %}
+		<article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
+              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
+            <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
+            {% if post.liked.all.count >= 2 %}
+              <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
+            {% else %}
+              <p><strong><em>Like: {{ post.liked.all.count }}</em></strong></p>
+            {% endif %}
+          </div>
+        </article>
+		{% endif %}
+	{% endfor %}
+{% endfor %}
+{% endblock content %}
