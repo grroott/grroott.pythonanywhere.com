@@ -29,8 +29,13 @@
 			{{ following.count }} Following
 			</a></p>
 	      {% endif %}
-
-	      <p>{{ profile_likes }} Likes</p>
+	      {% if profile_likes == 0 %}
+	      	<p>0 Like</p>
+	      {% elif profile_likes == 1 %}
+	      	<p>1 Like</p>
+	      {% else %}
+	      	<p>{{ profile_likes }} Likes</p>
+	      {% endif %}
 
 	      <p class="text-secondary"><em>{{ user.profile.bio }}</em></p>
 	    </div>
