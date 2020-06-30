@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+{% block content %}
+{% for i in maxval %}
+	{% for user in users %}
+		{% if i.post__author == user.id %}
+      <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ user.profile.image.url }}">
+  		  <a class="mt-3" href="{% url 'user-posts' user %}">{{ user }}</a>
+        <p></p>
+      </article>
+		{% endif %}
+	{% endfor %}
+{% endfor %}
+{% endblock content %}

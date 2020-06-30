@@ -140,3 +140,12 @@ def most_liked_posts(request):
 	}
 	return render(request, 'blog/most_liked_posts.html', context)
 
+def most_liked_authors(request):
+	query = Like.objects.filter(value='Like').values('post__author').order_by().annotate(profile_like_count=Count('post__author'))
+	maxval = sorted(query, key=lambda x:x['profile_like_count'], reverse=True)[:5]
+	users = User.objects.all()
+	context={
+	'maxval':maxval,
+	'users': users
+	}
+	return render(request, 'blog/most_liked_authors.html', context)

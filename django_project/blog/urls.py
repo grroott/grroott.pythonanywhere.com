@@ -23,4 +23,5 @@ urlpatterns = [
     path('likes/', views.like_post, name='like-post'),
     path('search/', views.search, name='search'),
     path('most-liked-posts/', views.most_liked_posts, name='most-liked-posts'),
+    path('most-liked-authors/', views.most_liked_authors, name='most-liked-authors'),
 ]
