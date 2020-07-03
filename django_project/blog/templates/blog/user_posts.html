@@ -1,83 +1,88 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    {% for post in posts %}
-      {% if forloop.first %}
-        <div class="media media content-section">
-          <img class="rounded-circle account-img" src="{{ post.author.profile.image.url }}">
-          <div class="media-body">
-            <h2 class="account-heading">{{ post.author }}</h2>
-            <p class="text-secondary">{{ post.author.email }}</p>
 
-            {% if post.author.profile.followed.all.count == 0  %}
-              <p class="text-secondary"> <a href="#">
-              {{ post.author.profile.followed.all.count }} Follower
-              </a></p>
-            {% elif post.author.profile.followed.all.count == 1 %}
-              <p class="text-secondary"> <a href="{% url 'followers' post.author %}">
-              {{ post.author.profile.followed.all.count }} Follower
-              </a></p>
-            {% else %}
-              <p class="text-secondary"> <a href="{% url 'followers' post.author %}">
-              {{ post.author.profile.followed.all.count }} Followers
-              </a></p>
-            {% endif %}
+    <div class="media media content-section">
+        <img class="rounded-circle account-img" src="{{ profile_info.image.url }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ profile_info.user }}</h2>
+          <p class="text-secondary">{{ profile_info.email }}</p>
+
+          {% if profile_info.followed.all.count == 0  %}
+            <p class="text-secondary"> <a href="#">
+            0 Follower
+            </a></p>
+          {% elif profile_info.followed.all.count == 1 %}
+            <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
+            1 Follower
+            </a></p>
+          {% else %}
+            <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
+            {{ profile_info.followed.all.count }} Followers
+            </a></p>
+          {% endif %}
 
 
-            {% if following.count == 0  %}
-              <p class="text-secondary"> <a href="#">
-              {{ following.count }} Following
-              </a></p>
-            {% else %}
-              <p class="text-secondary"> <a href="{% url 'following' post.author %}">
-              {{ following.count }} Following
-              </a></p>
-            {% endif %}
+          {% if following.count == 0  %}
+            <p class="text-secondary"> <a href="#">
+            0 Following
+            </a></p>
+          {% else %}
+            <p class="text-secondary"> <a href="{% url 'following' profile_info.user %}">
+            {{ following.count }} Following
+            </a></p>
+          {% endif %}
 
+          {% if profile_likes == None %}
+            <p>0 like</p>
+          {% elif profile_likes == 1 %}
+            <p>1 Like</p>
+          {% else %}
             <p>{{ profile_likes }} Likes</p>
+          {% endif %}
 
-            <p class="text-secondary"><em>{{ post.author.profile.bio }}</em></p>
+          <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
 
-            {% if post.author.profile != user.profile %}
-            <form action="{% url 'follow-profile' %}" method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="profile_id" value="{{ post.author.profile.id }}">
-              {% if user not in post.author.profile.followed.all %}
-                <button class="btn btn-outline-info mb-4" type="submit">Follow</button>
-              {% else %}
-                <button class="btn btn-info mb-4" type="submit">Following</button>
-              {% endif %}
-            </form>
-            {% endif %}
-          </div>
-      </div>
-      {% endif %}
-    {% endfor %}
-
-    <p></p>
-
-
-    <h2 class="mb-3">Posts by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h2>
-    {% for post in posts %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
-              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-            </div>
-            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
-            <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
-
-            {% if post.liked.all.count >= 2 %}
-              <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
+          {% if profile_info != user.profile %}
+          <form action="{% url 'follow-profile' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="profile_id" value="{{ profile_info.id }}">
+            {% if user not in profile_info.followed.all %}
+              <button class="btn btn-outline-info mb-4" type="submit">Follow</button>
             {% else %}
-              <p><strong><em>Like: {{ post.liked.all.count }}</em></strong></p>
+              <button class="btn btn-info mb-4" type="submit">Following</button>
             {% endif %}
+          </form>
+          {% endif %}
+        </div>
+    </div>
+  <p></p>
 
-          </div>
-        </article>
-    {% endfor %}
+    {% if posts %}
+      <h2 class="mb-3">Posts by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h2>
+      {% for post in posts %}
+          <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+            <div class="media-body">
+              <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
+                <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+              </div>
+              <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+              <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
+              <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
+
+              {% if post.liked.all.count >= 2 %}
+                <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
+              {% else %}
+                <p><strong><em>Like: {{ post.liked.all.count }}</em></strong></p>
+              {% endif %}
+
+            </div>
+          </article>
+      {% endfor %}
+    {% else %}
+    <h2 class="mb-3">{{ profile_info.user }} does not have any posts!</h2>
+    {% endif %}
     {% if is_paginated %}
 
       {% if page_obj.has_previous %}

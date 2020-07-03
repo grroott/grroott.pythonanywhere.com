@@ -42,6 +42,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
         context = super(UserPostListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         context['following'] = Profile.objects.filter(followed=user)
+        context['profile_info'] = Profile.objects.get(user=user)
         context['profile_likes'] = Post.objects.filter(author=user).annotate(like_count=Count('liked')).aggregate(total_likes=Sum('like_count'))['total_likes']
         return context
 
