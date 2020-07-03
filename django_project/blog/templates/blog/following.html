@@ -1,11 +1,16 @@
 {% extends "blog/base.html" %}
 {% block content %}
-<h3 class="mb-3" >"{{ posts.first.author }}" is following {{ following.count }} people:</h3>
+
+<h3 class="mb-3" >"{{ profile_info.user }}" is following {{ following.count }} people:</h3>
 
 {% for follow in following %}
-	<a href=" {% url 'user-posts' follow.user %}">{{ follow.user }}</a>
-  	<p></p>
-{% endfor %}
 
+	<article class="media content-section">
+		<img class="rounded-circle article-img" src="{{ follow.user.profile.image.url }}">
+			  <a class="mt-3" href="{% url 'user-posts' follow.user %}">{{ follow.user }}</a>
+		<p></p>
+	</article>
+
+{% endfor %}
 
 {% endblock content %}

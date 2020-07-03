@@ -1,13 +1,15 @@
 {% extends "blog/base.html" %}
 {% block content %}
-<h3 class="mb-3" >
-	"{{ posts.first.author }}" is followed by {{ posts.first.author.profile.followed.all.count }} people:
-</h3>
 
-{% for followers in posts.first.author.profile.followed.all %}
-	<a href=" {% url 'user-posts' followers %}">{{ followers }}</a>
-  	<p></p>
-{% endfor %}
+<h3 class="mb-3">"{{ profile_info.user }}" is followed by {{ profile_info.followed.all.count }} people:</h3>
+
+{% for followers in profile_info.followed.all %}
+<article class="media content-section">
+	<img class="rounded-circle article-img" src="{{ followers.profile.image.url }}">
+		  <a class="mt-3" href="{% url 'user-posts' followers %}">{{ followers }}</a>
+	<p></p>
+</article>
+ {% endfor %}
 
 
 {% endblock content %}
