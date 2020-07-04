@@ -2,16 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Like
-from django.http import HttpResponseRedirect
 from django.contrib import messages
 from users.models import Profile
 from django.db.models import Count, Sum, Q, Min, Max, Avg
 from django import template
-
-
+from django.template.loader import render_to_string
+	
 def home(request):
 	context = {
 	'posts' : Post.objects.all()
@@ -30,7 +29,7 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-    context_object_name = 'posts'
+    context_object_name = 'posts'    
     template_name = 'blog/user_posts.html'
     paginate_by = 5
 
@@ -49,7 +48,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
 
 class PostDetailView(LoginRequiredMixin, DetailView):
 	model = Post
-
+		
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 	model = Post
@@ -89,7 +88,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	    response = super().delete(request, *args, **kwargs)
 	    messages.success(self.request, 'Your post has been deleted sucessfully!')
 	    return response
-
+		
 
 def about(request):
 	return render(request, 'blog/about.html', {'title':'About'})
@@ -97,25 +96,26 @@ def about(request):
 
 def like_post(request):
 	user = request.user
-	if request.method == 'POST':
-		post_id = request.POST.get('post_id')
-		post_obj = Post.objects.get(id=post_id)
+	post_id = request.POST.get('id')
+	post_obj = get_object_or_404(Post, id=post_id)
 
-		if user in post_obj.liked.all():
-			post_obj.liked.remove(user)
+	if user in post_obj.liked.all():
+		post_obj.liked.remove(user)
+	else:
+		post_obj.liked.add(user)
+
+	like, created = Like.objects.get_or_create(user=user, post_id=post_id)
+
+	if not created:
+		if like.value == 'Like':
+			like.value = 'Unlike'
 		else:
-			post_obj.liked.add(user)
+			like.value = 'Like'
 
-		like, created = Like.objects.get_or_create(user=user, post_id=post_id)
-
-		if not created:
-			if like.value == 'Like':
-				like.value = 'Unlike'
-			else:
-				like.value = 'Like'
-
-		like.save()
-	return redirect(request.META.get('HTTP_REFERER', 'blog-home'))
+	like.save()
+	if request.is_ajax():
+	    html = render_to_string('blog/like_section.html', request=request)
+	    return JsonResponse({'form': html})
 
 
 def search(request):
@@ -141,6 +141,7 @@ def most_liked_posts(request):
 	}
 	return render(request, 'blog/most_liked_posts.html', context)
 
+
 def most_liked_authors(request):
 	query = Like.objects.filter(value='Like').values('post__author').order_by().annotate(profile_like_count=Count('post__author'))
 	maxval = sorted(query, key=lambda x:x['profile_like_count'], reverse=True)[:5]
@@ -150,3 +151,4 @@ def most_liked_authors(request):
 	'users': users
 	}
 	return render(request, 'blog/most_liked_authors.html', context)
+

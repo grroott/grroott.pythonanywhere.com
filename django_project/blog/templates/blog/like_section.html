@@ -1,0 +1,8 @@
+<form action="{% url 'like-post' %}" method="POST">
+  {% csrf_token %}
+  {% if user not in post.liked.all %}
+    <button id="like" name="post_id" value="{{ post.id }}" class="btn btn-outline-info mb-4" type="submit">Like</button>
+  {% else %}
+    <button id="like" name="post_id" value="{{ post.id }}" class="btn btn-info mb-4" type="submit">Unlike</button>
+  {% endif %}
+</form>

@@ -15,30 +15,24 @@
       </div>
       <h2 class="article-title">{{ object.title }}</h2>
       <p class="article-content">{{ object.content | safe }}</p>
-      {% if object.author != user %}
-      <form action="{% url 'like-post' %}" method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="post_id" value="{{ post.id }}">
-              {% if user not in post.liked.all %}
-                <button class="btn btn-outline-info mb-4" type="submit">Like</button>
-              {% else %}
-                <button class="btn btn-info mb-4" type="submit">Unlike</button>
-              {% endif %}
-      </form>
-      {% endif %}
-      {% if post.liked.all.count == 0  %}
-        <strong> <a href="#">
-        {{ post.liked.all.count }} Like
-        </a></strong>
-      {% elif post.liked.all.count == 1 %}
-        <strong> <a href="{% url 'post-detail-likes' post.id%}">
-        {{ post.liked.all.count }} Like
-        </a></strong>
-      {% else %}
-        <strong> <a href="{% url 'post-detail-likes' post.id%}">
-        {{ post.liked.all.count }} Likes
-        </a></strong>
-      {% endif %}
+      <div class="like-section">
+        {% if object.author != user %}
+          {% include 'blog/like_section.html' %}
+        {% endif %}
+        {% if post.liked.all.count == 0  %}
+          <strong> <a href="#">
+          {{ post.liked.all.count }} Like
+          </a></strong>
+        {% elif post.liked.all.count == 1 %}
+          <strong> <a href="{% url 'post-detail-likes' post.id%}">
+          {{ post.liked.all.count }} Like
+          </a></strong>
+        {% else %}
+          <strong> <a href="{% url 'post-detail-likes' post.id%}">
+          {{ post.liked.all.count }} Likes
+          </a></strong>
+        {% endif %}
+      </div>
     </div>
   </article>
 {% endblock content %}
