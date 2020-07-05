@@ -10,13 +10,9 @@
 			<p class="text-secondary"> <a href="#">
 			{{ user.profile.followed.all.count }} Follower
 			</a></p>
-	      {% elif user.profile.followed.all.count == 1 %}
-			<p class="text-secondary"> <a href="{% url 'followers' user %}">
-			{{ user.profile.followed.all.count }} Follower
-			</a></p>
 		  {% else %}
 			<p class="text-secondary"> <a href="{% url 'followers' user %}">
-			{{ user.profile.followed.all.count }} Followers
+			{{ user.profile.followed.all.count }} Follower{{ user.profile.followed.all.count | pluralize }}
 			</a></p>
 		  {% endif %}
 
@@ -31,10 +27,8 @@
 	      {% endif %}
 	      {% if profile_likes == None %}
 	      	<p>0 Like</p>
-	      {% elif profile_likes == 1 %}
-	      	<p>1 Like</p>
 	      {% else %}
-	      	<p>{{ profile_likes }} Likes</p>
+	      	<p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
 	      {% endif %}
 
 	      <p class="text-secondary"><em>{{ user.profile.bio }}</em></p>

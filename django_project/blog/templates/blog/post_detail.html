@@ -23,13 +23,9 @@
           <strong> <a href="#">
           {{ post.liked.all.count }} Like
           </a></strong>
-        {% elif post.liked.all.count == 1 %}
-          <strong> <a href="{% url 'post-detail-likes' post.id%}">
-          {{ post.liked.all.count }} Like
-          </a></strong>
         {% else %}
           <strong> <a href="{% url 'post-detail-likes' post.id%}">
-          {{ post.liked.all.count }} Likes
+          {{ post.liked.all.count }} Like{{ post.liked.all.count | pluralize }}
           </a></strong>
         {% endif %}
       </div>

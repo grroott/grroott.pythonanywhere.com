@@ -11,16 +11,11 @@
             <p class="text-secondary"> <a href="#">
             0 Follower
             </a></p>
-          {% elif profile_info.followed.all.count == 1 %}
-            <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
-            1 Follower
-            </a></p>
           {% else %}
             <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
-            {{ profile_info.followed.all.count }} Followers
+            {{ profile_info.followed.all.count }} Follower{{ profile_info.followed.all.count | pluralize}}
             </a></p>
           {% endif %}
-
 
           {% if following.count == 0  %}
             <p class="text-secondary"> <a href="#">
@@ -34,10 +29,8 @@
 
           {% if profile_likes == None %}
             <p>0 like</p>
-          {% elif profile_likes == 1 %}
-            <p>1 Like</p>
           {% else %}
-            <p>{{ profile_likes }} Likes</p>
+            <p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
           {% endif %}
 
           <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
@@ -72,7 +65,7 @@
               <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
 
               {% if post.liked.all.count >= 2 %}
-                <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
+                <p><strong><em>Like{{ post.liked.all.count | pluralize}}: {{ post.liked.all.count }}</em></strong></p>
               {% else %}
                 <p><strong><em>Like: {{ post.liked.all.count }}</em></strong></p>
               {% endif %}
