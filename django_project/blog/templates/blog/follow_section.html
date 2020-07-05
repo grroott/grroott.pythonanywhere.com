@@ -1,0 +1,8 @@
+<form action="{% url 'follow-profile' %}" method="POST">
+	{% csrf_token %}
+	{% if user not in profile_info.followed.all %}
+	  <button id ="follow"name="profile_id" value="{{ profile_info.id }}" class="btn btn-outline-info mb-4" type="submit">Follow</button>
+	{% else %}
+	  <button id ="follow"name="profile_id" value="{{ profile_info.id }}" class="btn btn-info mb-4" type="submit">Following</button>
+	{% endif %}
+</form>

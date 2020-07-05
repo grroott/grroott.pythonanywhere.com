@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, FeedbackForm
@@ -6,6 +6,8 @@ from .models import Profile, Follow
 from blog.models import Post
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 
 def register(request):
 	if request.method == "POST":
@@ -68,22 +70,23 @@ def feedback(request):
 
 def follow_profile(request):
 	user = request.user
-	if request.method == 'POST':
-		profile_id = request.POST.get('profile_id')
-		profile_obj = Profile.objects.get(id=profile_id)
+	profile_id = request.POST.get('id')
+	profile_obj = get_object_or_404(Profile, id=profile_id)
 
-		if user in profile_obj.followed.all():
-			profile_obj.followed.remove(user)
+	if user in profile_obj.followed.all():
+		profile_obj.followed.remove(user)
+	else:
+		profile_obj.followed.add(user)
+
+	follow, created = Follow.objects.get_or_create(user=user, profile_id=profile_id)
+
+	if not created:
+		if follow.follow_value == 'Follow':
+			follow.follow_value = 'Following'
 		else:
-			profile_obj.followed.add(user)
+			follow.follow_value = 'Follow'
 
-		follow, created = Follow.objects.get_or_create(user=user, profile_id=profile_id)
-
-		if not created:
-			if follow.follow_value == 'Follow':
-				follow.follow_value = 'Following'
-			else:
-				follow.follow_value = 'Follow'
-
-		follow.save()
-	return redirect(request.META.get('HTTP_REFERER', 'profile'))
+	follow.save()
+	if request.is_ajax():
+		html = render_to_string('blog/follow_section.html', request=request)
+		return JsonResponse({'form': html})

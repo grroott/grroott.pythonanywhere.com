@@ -6,7 +6,7 @@
         <div class="media-body">
           <h2 class="account-heading">{{ profile_info.user }}</h2>
           <p class="text-secondary">{{ profile_info.email }}</p>
-
+          
           {% if profile_info.followed.all.count == 0  %}
             <p class="text-secondary"> <a href="#">
             0 Follower
@@ -34,18 +34,11 @@
           {% endif %}
 
           <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
-
-          {% if profile_info != user.profile %}
-          <form action="{% url 'follow-profile' %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="profile_id" value="{{ profile_info.id }}">
-            {% if user not in profile_info.followed.all %}
-              <button class="btn btn-outline-info mb-4" type="submit">Follow</button>
-            {% else %}
-              <button class="btn btn-info mb-4" type="submit">Following</button>
+          <div class="follow-section">
+            {% if profile_info != user.profile %}
+              {% include 'blog/follow_section.html' %}
             {% endif %}
-          </form>
-          {% endif %}
+          </div>
         </div>
     </div>
   <p></p>
