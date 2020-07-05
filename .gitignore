@@ -1,3 +1,4 @@
 Password.txt
 venv
 *.pyc
+.env
