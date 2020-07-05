@@ -6,39 +6,40 @@
         <div class="media-body">
           <h2 class="account-heading">{{ profile_info.user }}</h2>
           <p class="text-secondary">{{ profile_info.email }}</p>
-          
-          {% if profile_info.followed.all.count == 0  %}
-            <p class="text-secondary"> <a href="#">
-            0 Follower
-            </a></p>
-          {% else %}
-            <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
-            {{ profile_info.followed.all.count }} Follower{{ profile_info.followed.all.count | pluralize}}
-            </a></p>
-          {% endif %}
+          <div class="profile-info">
+              {% if profile_info.followed.all.count == 0  %}
+                <p class="text-secondary"> <a href="#">
+                0 Follower
+                </a></p>
+              {% else %}
+                <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
+                {{ profile_info.followed.all.count }} Follower{{ profile_info.followed.all.count | pluralize}}
+                </a></p>
+              {% endif %}
 
-          {% if following.count == 0  %}
-            <p class="text-secondary"> <a href="#">
-            0 Following
-            </a></p>
-          {% else %}
-            <p class="text-secondary"> <a href="{% url 'following' profile_info.user %}">
-            {{ following.count }} Following
-            </a></p>
-          {% endif %}
+              {% if following.count == 0  %}
+                <p class="text-secondary"> <a href="#">
+                0 Following
+                </a></p>
+              {% else %}
+                <p class="text-secondary"> <a href="{% url 'following' profile_info.user %}">
+                {{ following.count }} Following
+                </a></p>
+              {% endif %}
 
-          {% if profile_likes == None %}
-            <p>0 like</p>
-          {% else %}
-            <p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
-          {% endif %}
+              {% if profile_likes == None or profile_likes == 0 %}
+                <p>0 like</p>
+              {% else %}
+                <p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
+              {% endif %}
 
-          <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
-          <div class="follow-section">
-            {% if profile_info != user.profile %}
-              {% include 'blog/follow_section.html' %}
-            {% endif %}
-          </div>
+              <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
+              <div class="follow-section">
+                {% if profile_info != user.profile %}
+                  {% include 'blog/follow_section.html' %}
+                {% endif %}
+              </div>
+            </div>
         </div>
     </div>
   <p></p>
