@@ -1,21 +1,53 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
+from .forms import CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post, Like
+from .models import Post, Like, Comment
 from django.contrib import messages
 from users.models import Profile
 from django.db.models import Count, Sum, Q, Min, Max, Avg
 from django import template
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 	
-def home(request):
+@login_required
+def post_detail(request, pk):
+
+	object = Post.objects.get(id=pk)
+	comments = Comment.objects.filter(post=pk, reply=None).order_by('-date_posted')
+
+	if request.method == 'POST':
+		comment_form = CommentForm(request.POST or None)
+		if comment_form.is_valid():
+			comment = request.POST.get('comment')
+			reply_id = request.POST.get('comment_id')
+			comment_obj=None
+			if reply_id:
+				comment_obj=Comment.objects.get(id=reply_id)
+			content = Comment.objects.create(post=object, user=request.user, comment=comment, reply=comment_obj)
+			content.save()
+			messages.success(request, f'Your comment has been posted!')
+			return HttpResponseRedirect(object.get_absolute_url())
+
+	else:
+		comment_form=CommentForm()
+
 	context = {
-	'posts' : Post.objects.all()
+	'object' : object,
+	'comments': comments,
+	'comment_form': comment_form
 	}
-	return render(request, 'blog/home.html', context)
+	return render(request, 'blog/post_detail.html', context)
+
+@login_required
+def post_detail_likes(request, pk):
+	context = {
+	'object' : Post.objects.get(id=pk),
+	}
+	return render(request, 'blog/post_detail_likes.html', context)
 
 class PostListView(LoginRequiredMixin, ListView):
 	model = Post
@@ -44,11 +76,6 @@ class UserPostListView(LoginRequiredMixin, ListView):
         context['profile_info'] = Profile.objects.get(user=user)
         context['profile_likes'] = Post.objects.filter(author=user).annotate(like_count=Count('liked')).aggregate(total_likes=Sum('like_count'))['total_likes']
         return context
-
-
-class PostDetailView(LoginRequiredMixin, DetailView):
-	model = Post
-		
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 	model = Post

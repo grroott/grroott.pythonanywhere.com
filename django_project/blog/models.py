@@ -38,3 +38,13 @@ class Like(models.Model):
 
 	def __str__(self):
 		return str(self.post)
+
+class Comment(models.Model):
+	post = models.ForeignKey(Post, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	comment = models.TextField(max_length=300)
+	reply = models.ForeignKey("Comment", null=True, related_name="replies", on_delete=models.CASCADE)
+	date_posted = models.DateTimeField(default=timezone.now)
+
+	def __str__(self):
+		return "{} - {}".format(self.post.title, str(self.user.username))

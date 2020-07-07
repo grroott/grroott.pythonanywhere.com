@@ -1,12 +1,12 @@
 {% extends "blog/base.html" %}
 {% block content %}
 
-<h3 class="mb-3" >The post "{{ post.title }}" is liked by</h3>
-  {% for like in post.liked.all %}
+<h3 class="mb-3" >The post "{{ object.title }}" is liked by</h3>
+  {% for like in object.liked.all %}
     <article class="media content-section">
-	<img class="rounded-circle article-img" src="{{ like.profile.image.url }}">
-		  <a class="mt-3" href="{% url 'user-posts' like %}">{{ like }}</a>
-	<p></p>
-</article>
+		<img class="rounded-circle article-img" src="{{ like.profile.image.url }}">
+			  <a class="mt-3" href="{% url 'user-posts' like %}">{{ like }}</a>
+		<p></p>
+	</article>
   {% endfor %}
 {% endblock content %}
