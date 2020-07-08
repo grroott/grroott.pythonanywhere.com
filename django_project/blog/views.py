@@ -12,7 +12,7 @@ from django.db.models import Count, Sum, Q, Min, Max, Avg
 from django import template
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-
+	
 @login_required
 def post_detail(request, pk):
 
@@ -65,7 +65,7 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-    context_object_name = 'posts'
+    context_object_name = 'posts'    
     template_name = 'blog/user_posts.html'
     paginate_by = 5
 
@@ -119,12 +119,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	    response = super().delete(request, *args, **kwargs)
 	    messages.success(self.request, 'Your post has been deleted sucessfully!')
 	    return response
-
+		
 
 def about(request):
 	return render(request, 'blog/about.html', {'title':'About'})
 
-
+@login_required
 def like_post(request):
 	user = request.user
 	post_id = request.POST.get('id')
@@ -148,7 +148,7 @@ def like_post(request):
 	    html = render_to_string('blog/like_section.html', request=request)
 	    return JsonResponse({'form': html})
 
-
+@login_required
 def search(request):
 	query = request.GET.get('user_search_input')
 
@@ -162,6 +162,7 @@ def search(request):
 	}
 	return render(request, 'blog/search.html', context)
 
+@login_required
 def most_liked_posts(request):
 	query = Like.objects.filter(value='Like').values('value', 'post_id').order_by().annotate(like_count=Count('post_id'))
 	maxval = sorted(query, key=lambda x:x['like_count'], reverse=True)[:5]
@@ -172,7 +173,7 @@ def most_liked_posts(request):
 	}
 	return render(request, 'blog/most_liked_posts.html', context)
 
-
+@login_required
 def most_liked_authors(request):
 	query = Like.objects.filter(value='Like').values('post__author').order_by().annotate(profile_like_count=Count('post__author'))
 	maxval = sorted(query, key=lambda x:x['profile_like_count'], reverse=True)[:5]
@@ -182,7 +183,7 @@ def most_liked_authors(request):
 	'users': users
 	}
 	return render(request, 'blog/most_liked_authors.html', context)
-
+@login_required
 def bookmark_post(request, pk):
 	post = get_object_or_404(Post, id=pk)
 	if post.bookmark.filter(id=request.user.id).exists():
@@ -192,7 +193,7 @@ def bookmark_post(request, pk):
 		post.bookmark.add(request.user)
 		messages.success(request, f'Added to bookmark successfully!')
 	return HttpResponseRedirect(post.get_absolute_url())
-
+@login_required
 def my_bookmarks(request):
 	user = request.user
 	bookmarks_qs = user.bookmark.all()

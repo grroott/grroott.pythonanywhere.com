@@ -67,7 +67,7 @@ def feedback(request):
 		form = FeedbackForm()
 	return render(request, 'users/feedback.html', {'form':form})
 
-
+@login_required
 def follow_profile(request):
 	user = request.user
 	profile_id = request.POST.get('id')
