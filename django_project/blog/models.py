@@ -12,6 +12,7 @@ class Post(models.Model):
 	liked = models.ManyToManyField(User, default=None, blank=True, related_name = 'liked')
 	date_posted = models.DateTimeField(default=timezone.now)
 	author = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'author')
+	bookmark = models.ManyToManyField(User, related_name='bookmark', blank=True)
 
 	def __str__(self):
 		return self.title

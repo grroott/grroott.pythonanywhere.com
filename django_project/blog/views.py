@@ -12,12 +12,15 @@ from django.db.models import Count, Sum, Q, Min, Max, Avg
 from django import template
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-	
+
 @login_required
 def post_detail(request, pk):
 
 	object = Post.objects.get(id=pk)
 	comments = Comment.objects.filter(post=pk, reply=None).order_by('-date_posted')
+	is_bookmark = False
+	if object.bookmark.filter(id=request.user.id).exists():
+		is_bookmark=True
 
 	if request.method == 'POST':
 		comment_form = CommentForm(request.POST or None)
@@ -38,7 +41,8 @@ def post_detail(request, pk):
 	context = {
 	'object' : object,
 	'comments': comments,
-	'comment_form': comment_form
+	'comment_form': comment_form,
+	'is_bookmark': is_bookmark
 	}
 	return render(request, 'blog/post_detail.html', context)
 
@@ -61,7 +65,7 @@ class PostListView(LoginRequiredMixin, ListView):
 		return Post.objects.exclude(author=username).order_by('-date_posted')
 
 class UserPostListView(LoginRequiredMixin, ListView):
-    context_object_name = 'posts'    
+    context_object_name = 'posts'
     template_name = 'blog/user_posts.html'
     paginate_by = 5
 
@@ -115,7 +119,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	    response = super().delete(request, *args, **kwargs)
 	    messages.success(self.request, 'Your post has been deleted sucessfully!')
 	    return response
-		
+
 
 def about(request):
 	return render(request, 'blog/about.html', {'title':'About'})
@@ -179,3 +183,23 @@ def most_liked_authors(request):
 	}
 	return render(request, 'blog/most_liked_authors.html', context)
 
+def bookmark_post(request, pk):
+	post = get_object_or_404(Post, id=pk)
+	if post.bookmark.filter(id=request.user.id).exists():
+		post.bookmark.remove(request.user)
+		messages.success(request, f'Removed from bookmark successfully!')
+	else:
+		post.bookmark.add(request.user)
+		messages.success(request, f'Added to bookmark successfully!')
+	return HttpResponseRedirect(post.get_absolute_url())
+
+def my_bookmarks(request):
+	user = request.user
+	bookmarks_qs = user.bookmark.all()
+	bookmarks = list(reversed(bookmarks_qs))
+
+	context={
+	'bookmarks': bookmarks
+	}
+
+	return render (request, 'blog/my_bookmarks.html', context)
