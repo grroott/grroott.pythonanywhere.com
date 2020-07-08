@@ -7,39 +7,39 @@
           <h2 class="account-heading">{{ profile_info.user }}</h2>
           <p class="text-secondary">{{ profile_info.email }}</p>
           <div class="profile-info">
-              {% if profile_info.followed.all.count == 0  %}
-                <p class="text-secondary"> <a href="#">
-                0 Follower
-                </a></p>
-              {% else %}
-                <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
-                {{ profile_info.followed.all.count }} Follower{{ profile_info.followed.all.count | pluralize}}
-                </a></p>
-              {% endif %}
+            {% if profile_info.followed.all.count == 0  %}
+              <p class="text-secondary"> <a href="#">
+              0 Follower
+              </a></p>
+            {% else %}
+              <p class="text-secondary"> <a href="{% url 'followers' profile_info.user %}">
+              {{ profile_info.followed.all.count }} Follower{{ profile_info.followed.all.count | pluralize}}
+              </a></p>
+            {% endif %}
 
-              {% if following.count == 0  %}
-                <p class="text-secondary"> <a href="#">
-                0 Following
-                </a></p>
-              {% else %}
-                <p class="text-secondary"> <a href="{% url 'following' profile_info.user %}">
-                {{ following.count }} Following
-                </a></p>
-              {% endif %}
+            {% if following.count == 0  %}
+              <p class="text-secondary"> <a href="#">
+              0 Following
+              </a></p>
+            {% else %}
+              <p class="text-secondary"> <a href="{% url 'following' profile_info.user %}">
+              {{ following.count }} Following
+              </a></p>
+            {% endif %}
 
-              {% if profile_likes == None or profile_likes == 0 %}
-                <p>0 like</p>
-              {% else %}
-                <p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
-              {% endif %}
+            {% if profile_likes == None or profile_likes == 0 %}
+              <p>0 like</p>
+            {% else %}
+              <p>{{ profile_likes }} Like{{ profile_likes | pluralize }}</p>
+            {% endif %}
 
-              <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
-              <div class="follow-section">
-                {% if profile_info != user.profile %}
-                  {% include 'blog/follow_section.html' %}
-                {% endif %}
-              </div>
+            <p class="text-secondary"><em>{{ profile_info.bio }}</em></p>
+            <div class="follow-section">
+              {% if profile_info != user.profile %}
+                {% include 'blog/follow_section.html' %}
+              {% endif %}
             </div>
+          </div>
         </div>
     </div>
   <p></p>
@@ -51,12 +51,12 @@
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
             <div class="media-body">
               <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
+                <a class="mr-2" data-toggle="tooltip" data-placement="top" title="View {{ post.author }}'s profile" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
                 <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
               </div>
-              <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-              <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
-              <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
+              <h2><a data-toggle="tooltip" data-placement="top" title="View {{ post.title }} post" class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+              <p class="article-content">{{ post.content | safe | truncatewords:"20" }}</p>
+              <a data-toggle="tooltip" data-placement="top" title="See full post" href="{% url 'post-detail' post.id %}"><u>See post</u></a>
 
               {% if post.liked.all.count >= 2 %}
                 <p><strong><em>Like{{ post.liked.all.count | pluralize}}: {{ post.liked.all.count }}</em></strong></p>

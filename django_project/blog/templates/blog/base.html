@@ -25,14 +25,14 @@
                 $.ajax({
                     type : 'POST',
                     url : {% url 'like-post' %},
-                    data : {'id' : pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    data : {'id' : pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, 
                     dataType : 'json',
                     success : function(response){
                     	$(".like-section").load(" .like-section")
-
+						   
                     },
                     error : function(rs, e){
-                        console.log(rs.responseText);
+                        console.log(rs.responseText); 
                     },
                 });
             });
@@ -42,14 +42,14 @@
                 $.ajax({
                     type : 'POST',
                     url : {% url 'follow-profile' %},
-                    data : {'id' : pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    data : {'id' : pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, 
                     dataType : 'json',
                     success : function(response){
                     	$(".profile-info").load(" .profile-info")
-
+						   
                     },
                     error : function(rs, e){
-                        console.log(rs.responseText);
+                        console.log(rs.responseText); 
                     },
                 });
             });
@@ -59,9 +59,12 @@
             $('.view-reply-btn').click(function(){
             	$(this).parent().parent().next().next('.comment-replies').fadeToggle()
             })
+            $(function () {
+  				$('[data-toggle="tooltip"]').tooltip()
+})
         });
     </script>
-
+	
 
 
 	<title>Blog</title>
@@ -132,7 +135,7 @@
 	  </div>
 	</main>
 
-
+	
 	<!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <!--     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->

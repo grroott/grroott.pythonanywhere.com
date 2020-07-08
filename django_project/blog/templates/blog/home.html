@@ -5,12 +5,12 @@
           <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
+              <a class="mr-2" data-toggle="tooltip" data-placement="top" title="View {{ post.author }}'s profile" href="{% url 'user-posts' post.author.username %}"><em>{{ post.author }}</em></a>
               <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
             </div>
-            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content | safe | truncatewords:"50" }}</p>
-            <a href="{% url 'post-detail' post.id %}"><u>See post</u></a>
+            <h2><a class="article-title" data-toggle="tooltip" data-placement="top" title="View {{ post.title }} post" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content | safe | truncatewords:"20" }}</p>
+            <a data-toggle="tooltip" data-placement="top" title="See full post" href="{% url 'post-detail' post.id %}"><u>See post</u></a>
             {% if post.liked.all.count >= 2 %}
               <p><strong><em>Likes: {{ post.liked.all.count }}</em></strong></p>
             {% else %}
@@ -41,3 +41,4 @@
 
     {% endif %}
 {% endblock content %}
+
